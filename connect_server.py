@@ -46,15 +46,35 @@ def start_game(connection: GameConnection, username: str) -> bool:
         close(connection)
 
 
-#def insert_user_command(connection: GameConnection, user_command: str)-> str:
+def input_user_command(connection: GameConnection, user_command: str)-> None:
     '''
 
     '''
-#    _write_line(connection, user_command)
-#    response = _read_line(connection)
-#
-#    if response == 'OKAY':
-#
+    _write_line(connection, user_command)
+
+
+
+def read_server_input(connection: GameConnection) -> str:
+    first_response = _read_line(connection)
+    
+    if first_response == 'OKAY':
+        second_response = _read_line(connection)
+        third_response = _read_line(connection)
+        return second_response
+    
+    elif first_response  == 'WINNDER_RED' or 'WINNER_YELLOW':
+        return first_response
+    
+    elif first_response == 'INVALID':
+        second_response = _read_line(connection)
+        if second_response == 'READY':
+            return 'FIRST RESPONSE'
+        else:
+            close(connection)
+            return
+    
+    close(connection)
+
 
 
 def close(connection: GameConnection) -> None:

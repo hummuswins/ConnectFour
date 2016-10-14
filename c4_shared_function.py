@@ -38,6 +38,8 @@ def board(game_state: connectfour.GameState) -> str:
     return string
 
 
+def print_board(connect
+
 def user_input(game_state: connectfour.GameState, user_command: str) -> connectfour.GameState:
     ''' Identifying whether the user wants to drop or pop its piece
     in its his/her desired column. Returning Invaid Move Commands if
@@ -53,9 +55,9 @@ def user_input(game_state: connectfour.GameState, user_command: str) -> connectf
             column = int(user_command[4])
             game_state = connectfour.pop(game_state, column)
             
-        else:
-            print('Error, Invalid Commands')
-    
+        elif user_command == 'INVALID':
+            raise connectfour.InvalidMoveError
+        
     except connectfour.InvalidMoveError:
         print('Invalid Move Error')
         
@@ -67,34 +69,5 @@ def user_input(game_state: connectfour.GameState, user_command: str) -> connectf
         
 
 
-def play_game(game_state: connectfour.GameState):
-    ''' Tells the user the correct input format for the game,
-    and starts playing the game with the server. It will also let
-    the user know who is the winner when the game is over.
-    '''
-    print('Welcome! In order to play the game, please type "DROP #" or "POP #" with # as the column that you want to drop or pop the piece!')
-    print(board(game_state))
-    
-    while True:
-        user_command = input()
-        game_state = user_input(game_state, user_command)
-        print(board(game_state))
 
-        if connectfour.winner(game_state) == connectfour.RED:
-            print('WINNER_RED')
-            sys.exit()
-        elif connectfour.winner(game_state) == connectfour.YELLOW:
-            print('WINNER_YELLOW')
-            sys.exit()
-
-
-def main():
-    ''' Calls the following functions if it starts in the main function
-    '''
-    game_state = make_board()
-    play_game(game_state)
-
-    
-if __name__ == '__main__':
-    main()
     
