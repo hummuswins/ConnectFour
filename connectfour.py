@@ -13,7 +13,6 @@ strictly a collection of tools for implementing the game logic.
 
 import collections
 
-
 # These constants specify the concepts of "no player", the "red player"
 # and the "yellow player".  Your code should use these constants in
 # place of their hard-coded values.  Note that these values are not
@@ -26,7 +25,6 @@ NONE = 0
 RED = 1
 YELLOW = 2
 
-
 # These constants specify the size of the game board (i.e., the number
 # of rows and columns it has).  It should be possible to change these
 # constants and re-run your program so that the board will have a
@@ -36,7 +34,6 @@ YELLOW = 2
 
 BOARD_COLUMNS = 7
 BOARD_ROWS = 6
-
 
 # GameState is a namedtuple that tracks everything important about
 # the state of a Connect Four game as it progresses.  It contains
@@ -51,7 +48,6 @@ BOARD_ROWS = 6
 #     its value will always be either RED or YELLOW
 
 GameState = collections.namedtuple('GameState', ['board', 'turn'])
-
 
 
 # This is the simplest example of how you create new kinds of exceptions
@@ -74,8 +70,6 @@ class GameOverError(Exception):
     pass
 
 
-
-
 # The next four functions are the "public" functions that are provided
 # by this module.  You'll need to call all four of these functions, but
 # will not need (or want) to call any of the others.
@@ -87,8 +81,7 @@ def new_game() -> GameState:
     Returns a GameState representing a brand new game in which no
     moves have been made yet.
     '''
-    return GameState(board = _new_game_board(), turn = RED)
-
+    return GameState(board=_new_game_board(), turn=RED)
 
 
 def drop(game_state: GameState, column_number: int) -> GameState:
@@ -112,8 +105,7 @@ def drop(game_state: GameState, column_number: int) -> GameState:
         new_board = _copy_game_board(game_state.board)
         new_board[column_number][empty_row] = game_state.turn
         new_turn = _opposite_turn(game_state.turn)
-        return GameState(board = new_board, turn = new_turn)
-
+        return GameState(board=new_board, turn=new_turn)
 
 
 def pop(game_state: GameState, column_number: int) -> GameState:
@@ -139,11 +131,10 @@ def pop(game_state: GameState, column_number: int) -> GameState:
 
         new_turn = _opposite_turn(game_state.turn)
 
-        return GameState(board = new_board, turn = new_turn)
+        return GameState(board=new_board, turn=new_turn)
 
     else:
         raise InvalidMoveError()
-
 
 
 def winner(game_state: GameState) -> int:
@@ -154,7 +145,7 @@ def winner(game_state: GameState) -> int:
     returned.
     '''
     winner = NONE
-    
+
     for col in range(BOARD_COLUMNS):
         for row in range(BOARD_ROWS):
             if _winning_sequence_begins_at(game_state.board, col, row):
@@ -168,8 +159,6 @@ def winner(game_state: GameState) -> int:
                     return _opposite_turn(game_state.turn)
 
     return winner
-    
-
 
 
 # Modules often contain functions, variables, or classes whose names begin
@@ -198,7 +187,6 @@ def _new_game_board() -> [[int]]:
     return board
 
 
-
 def _copy_game_board(board: [[int]]) -> [[int]]:
     '''Copies the given game board'''
     board_copy = []
@@ -209,7 +197,6 @@ def _copy_game_board(board: [[int]]) -> [[int]]:
             board_copy[-1].append(board[col][row])
 
     return board_copy
-
 
 
 def _find_bottom_empty_row_in_column(board: [[int]], column_number: int) -> int:
@@ -225,14 +212,12 @@ def _find_bottom_empty_row_in_column(board: [[int]], column_number: int) -> int:
     return -1
 
 
-
 def _opposite_turn(turn: str) -> str:
     '''Given the player whose turn it is now, returns the opposite player'''
     if turn == RED:
         return YELLOW
     else:
         return RED
-
 
 
 def _winning_sequence_begins_at(board: [[int]], col: int, row: int) -> bool:
@@ -242,14 +227,13 @@ def _winning_sequence_begins_at(board: [[int]], col: int, row: int) -> bool:
     eight possible directions; returns False otherwise
     '''
     return _four_in_a_row(board, col, row, 0, 1) \
-            or _four_in_a_row(board, col, row, 1, 1) \
-            or _four_in_a_row(board, col, row, 1, 0) \
-            or _four_in_a_row(board, col, row, 1, -1) \
-            or _four_in_a_row(board, col, row, 0, -1) \
-            or _four_in_a_row(board, col, row, -1, -1) \
-            or _four_in_a_row(board, col, row, -1, 0) \
-            or _four_in_a_row(board, col, row, -1, 1)
-    
+           or _four_in_a_row(board, col, row, 1, 1) \
+           or _four_in_a_row(board, col, row, 1, 0) \
+           or _four_in_a_row(board, col, row, 1, -1) \
+           or _four_in_a_row(board, col, row, 0, -1) \
+           or _four_in_a_row(board, col, row, -1, -1) \
+           or _four_in_a_row(board, col, row, -1, 0) \
+           or _four_in_a_row(board, col, row, -1, 1)
 
 
 def _four_in_a_row(board: [[int]], col: int, row: int, coldelta: int, rowdelta: int) -> bool:
@@ -266,17 +250,15 @@ def _four_in_a_row(board: [[int]], col: int, row: int, coldelta: int, rowdelta: 
         for i in range(1, 4):
             if not _is_valid_column_number(col + coldelta * i) \
                     or not _is_valid_row_number(row + rowdelta * i) \
-                    or board[col + coldelta *i][row + rowdelta * i] != start_cell:
+                    or board[col + coldelta * i][row + rowdelta * i] != start_cell:
                 return False
         return True
-    
 
 
 def _require_valid_column_number(column_number: int) -> None:
     '''Raises a ValueError if its parameter is not a valid column number'''
     if type(column_number) != int or not _is_valid_column_number(column_number):
         raise ValueError('column_number must be int between 0 and {}'.format(BOARD_COLUMNS - 1))
-
 
 
 def _require_game_not_over(game_state: GameState) -> None:
@@ -288,11 +270,9 @@ def _require_game_not_over(game_state: GameState) -> None:
         raise GameOverError()
 
 
-
 def _is_valid_column_number(column_number: int) -> bool:
     '''Returns True if the given column number is valid; returns False otherwise'''
     return 0 <= column_number < BOARD_COLUMNS
-
 
 
 def _is_valid_row_number(row_number: int) -> bool:

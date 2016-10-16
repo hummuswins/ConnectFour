@@ -3,10 +3,10 @@
 from collections import namedtuple
 import socket
 
-
 GameConnection = namedtuple(
     'GameConnection',
     ['socket', 'input', 'output'])
+
 
 def connect(host: str, port: int) -> GameConnection:
     ''' Connects to the identified host and port, writes
@@ -18,7 +18,7 @@ def connect(host: str, port: int) -> GameConnection:
     game_socket.connect((host, port))
 
     game_input = game_socket.makefile('r')
-    game_output= game_socket.makefile('w')
+    game_output = game_socket.makefile('w')
 
     return GameConnection(game_socket, game_input, game_output)
 
@@ -30,51 +30,49 @@ def start_game(connection: GameConnection, username: str) -> bool:
     command = 'I32CFSP_HELLO ' + username
     _write_line(connection, command)
     first_response = _read_line(connection)
-    
+
     if first_response == 'WELCOME ' + username:
         _write_line(connection, 'AI_GAME')
         second_response = _read_line(connection)
-        
+
         if second_response == 'READY':
             return True
-        else:
-            close(connection)
-            
+
     elif first_response == 'ERROR':
         return False
-    else:
-        close(connection)
+
+    close(connection)
 
 
-def input_user_command(connection: GameConnection, user_command: str)-> None:
+def input_user_command(connection: GameConnection, user_command: str) -> None:
     '''
 
     '''
     _write_line(connection, user_command)
 
 
-
 def read_server_input(connection: GameConnection) -> str:
     first_response = _read_line(connection)
-    
+
     if first_response == 'OKAY':
         second_response = _read_line(connection)
         third_response = _read_line(connection)
-        return second_response
-    
-    elif first_response  == 'WINNDER_RED' or 'WINNER_YELLOW':
-        return first_response
-    
-    elif first_response == 'INVALID':
-        second_response = _read_line(connection)
-        if second_response == 'READY':
-            return 'FIRST RESPONSE'
+        if third_response == 'READY':
+            return second_response
         else:
             close(connection)
             return
-    
-    close(connection)
 
+    elif first_response == 'WINNER_RED' or 'WINNER_YELLOW':
+        return first_response
+
+    elif first_response == 'INVALID' or 'ERROR':
+        second_response = _read_line(connection)
+        if second_response == 'READY':
+            return first_response
+        else:
+            close(connection)
+            return
 
 
 def close(connection: GameConnection) -> None:

@@ -1,6 +1,4 @@
 import connectfour
-import collections
-import sys
 
 
 def make_board() -> connectfour.GameState:
@@ -38,11 +36,9 @@ def board(game_state: connectfour.GameState) -> str:
     return string
 
 
-def print_board(connect
-
-def user_input(game_state: connectfour.GameState, user_command: str) -> connectfour.GameState:
+def game_move(game_state: connectfour.GameState, user_command: str) -> connectfour.GameState:
     ''' Identifying whether the user wants to drop or pop its piece
-    in its his/her desired column. Returning Invaid Move Commands if
+    in its his/her desired column. Returning InvaLid Move Commands if
     the column number entered is out of range.
     '''
 
@@ -52,22 +48,21 @@ def user_input(game_state: connectfour.GameState, user_command: str) -> connectf
             game_state = connectfour.drop(game_state, column)
             
         elif user_command[0:4] == 'POP ':
-            column = int(user_command[4])
+            column = int(user_command[4]) - 1
             game_state = connectfour.pop(game_state, column)
-            
-        elif user_command == 'INVALID':
-            raise connectfour.InvalidMoveError
-        
-    except connectfour.InvalidMoveError:
-        print('Invalid Move Error')
-        
-    except IndexError:
-        print('Index Error')
-        
-    finally:
+
+        else:
+            print('ERROR')
+            return
+
         return game_state
-        
+
+    except connectfour.InvalidMoveError:
+        print("INVALID_MOVE_ERROR")
+        return
+
+    except (IndexError, ValueError) as e:
+        print(e)
+        return
 
 
-
-    
