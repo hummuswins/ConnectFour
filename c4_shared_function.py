@@ -38,16 +38,16 @@ def board(game_state: connectfour.GameState) -> str:
 
 def game_move(game_state: connectfour.GameState, user_command: str) -> connectfour.GameState:
     ''' Identifying whether the user wants to drop or pop its piece
-    in its his/her desired column. Returning InvaLid Move Commands if
-    the column number entered is out of range.
+    in its his/her desired column. Return an error that might occur.
     '''
 
     try:
+
         if user_command[0:4] == 'DROP':
             column = int(user_command[5]) - 1
             game_state = connectfour.drop(game_state, column)
             
-        elif user_command[0:4] == 'POP ':
+        elif user_command[0:3] == 'POP':
             column = int(user_command[4]) - 1
             game_state = connectfour.pop(game_state, column)
 
@@ -61,8 +61,15 @@ def game_move(game_state: connectfour.GameState, user_command: str) -> connectfo
         print("INVALID_MOVE_ERROR")
         return
 
-    except (IndexError, ValueError) as e:
-        print(e)
+    except IndexError:
+        print('DROP or POP must be followed by a space and a number')
         return
 
+    except ValueError:
+        print('Not a valid command. Please choose a number between 1 and 7\n'
+              'and put the number in the following format "DROP #".')
+        return
+
+    except TypeError:
+        return
 

@@ -13,18 +13,27 @@ def play_game(connection: connect_server.GameConnection, game_state: connectfour
         # This is getting the response from the server and printing it out
         response = connect_server.read_server_input(connection)
 
-        print(response)
-        if response == 'WINNER_RED' or response == 'WINNER_YELLOW':
+        print(response[0])
+        if response[0] == 'WINNER_RED':
             return
-        elif response == 'INVALID':
+        elif response[0] == 'INVALID':
             continue
         else:
-            game_state = c4_shared_function.game_move(game_state, response)
+            game_state = c4_shared_function.game_move(game_state, response[0])
+            if response[1] == 'WINNER_YELLOW':
+                print(c4_shared_function.board(game_state))
+                print(response[1])
+                return
 
         print(c4_shared_function.board(game_state))
 
 
 def user_input(connection: connect_server.GameConnection, game_state: connectfour.GameState) -> connectfour.GameState:
+    '''
+    Get user input. Make sure user input is valid. If valid, execute the user command into the server and
+    return the current game state. If not valid, the user input another command.
+    '''
+
     user_command = input()
     while c4_shared_function.game_move(game_state, user_command) is None:
         user_command = input()
@@ -38,8 +47,9 @@ def user_input(connection: connect_server.GameConnection, game_state: connectfou
 
 
 def main():
-    connection = connect_server.connect('woodhouse.ics.uci.edu', 4444)
+    # Check if server will accepts username. If it doesn't, redo the loop and ask for another username
     while True:
+        connection = connect_server.connect('woodhouse.ics.uci.edu', 4444)
         username = input('What is your username? ')
         if connect_server.start_game(connection, username):
             break

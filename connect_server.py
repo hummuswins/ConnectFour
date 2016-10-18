@@ -9,7 +9,8 @@ GameConnection = namedtuple(
 
 
 def connect(host: str, port: int) -> GameConnection:
-    ''' Connects to the identified host and port, writes
+    '''
+    Connects to the identified host and port, writes
     the user input into a readable message for the server,
     reads from the server's output, and return the socket,
     input, output as a namedtuple
@@ -24,7 +25,8 @@ def connect(host: str, port: int) -> GameConnection:
 
 
 def start_game(connection: GameConnection, username: str) -> bool:
-    '''Starts the game with a given username. If the game
+    '''
+    Starts the game with a given username. If the game
     successfully started returns TRUE. If not, it closes the game
     '''
     command = 'I32CFSP_HELLO ' + username
@@ -51,32 +53,36 @@ def input_user_command(connection: GameConnection, user_command: str) -> None:
     _write_line(connection, user_command)
 
 
-def read_server_input(connection: GameConnection) -> str:
+def read_server_input(connection: GameConnection):
     first_response = _read_line(connection)
 
     if first_response == 'OKAY':
         second_response = _read_line(connection)
         third_response = _read_line(connection)
-        if third_response == 'READY':
-            return second_response
+        if third_response == 'READY' or 'WINNER_YELLOW':
+            result = [second_response, third_response]
         else:
             close(connection)
-            return
+            print('SERVER CRASHED')
 
-    elif first_response == 'WINNER_RED' or 'WINNER_YELLOW':
-        return first_response
+    elif first_response == 'WINNER_RED':
+        result = [first_response]
 
-    elif first_response == 'INVALID' or 'ERROR':
+    elif first_response == 'INVALID':
         second_response = _read_line(connection)
         if second_response == 'READY':
-            return first_response
+            result = [first_response, second_response]
         else:
+            print('SERVER CRASHED')
             close(connection)
-            return
+
+    return result
+
 
 
 def close(connection: GameConnection) -> None:
-    ''' It closes all the connection with the server
+    '''
+    It closes all the connection with the server
     '''
     connection.input.close()
     connection.output.close()
@@ -84,7 +90,8 @@ def close(connection: GameConnection) -> None:
 
 
 def _write_line(connection: GameConnection, command: str) -> None:
-    '''From the identified connection, it transforms user input/ statement
+    '''
+    From the identified connection, it transforms user input/ statement
     into readable message for the server
     '''
     connection.output.write(command + '\r\n')
@@ -92,7 +99,8 @@ def _write_line(connection: GameConnection, command: str) -> None:
 
 
 def _read_line(connection: GameConnection) -> str:
-    '''From the identified connection, it transforms the server's message
+    '''
+    From the identified connection, it transforms the server's message
     into readable message for the user
     '''
     return connection.input.readline()[:-1]
