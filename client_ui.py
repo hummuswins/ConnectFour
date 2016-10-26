@@ -1,4 +1,7 @@
-# Playing with another player on own computer
+# James Anh Minh Nguyen ID: 45298461    Kammy Deng ID: 72943066
+#
+# This module allows the player to play against himself or 
+# against another player on his own computer
 import c4_shared_function
 import connectfour
 import sys
@@ -9,7 +12,7 @@ def _play_game(game_state: connectfour.GameState):
     and starts playing the game with the server. It will also let
     the user know who is the winner when the game is over.
     '''
-    print('Welcome! In order to play the game, please type "DROP #" or '
+    print('Welcome! In order to play the game, please type "DROP #" or \n'
           '"POP #" with # as the column that you want to drop or pop the piece!')
     print(c4_shared_function.board(game_state))
     
